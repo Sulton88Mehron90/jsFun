@@ -340,39 +340,55 @@ const bookPrompts = {
     //   'Catch-22', 'Treasure Island']
 //HOW/WHAT method will be used? - filter().
   },
-  
-  getNewBooks() {
-    // return an array of objects containing all books that were
-    // published in the 90's and 00's. Inlucde the title and the year Eg:
 
+getNewBooks(data) {
+  return data
+  // .filter(year => year.published >= 1990).map(book => {
+  //   return {
+  //     title: book.title,
+  //     year: book.published
+  //   };
+  // });
+
+  .reduce((acc, cur) => {
+    if(cur.published >= 1990){
+      acc.push({title: cur.title, year: cur.published});
+      // if the key and value name is predeterment, you can create an object as above for output
+    };
+    return acc;
+  },[]);
+
+//WHAT - what is the data type I am working with? Array of objects.
+//WANT - return an array of objects containing all books that were
+    // published in the 90's and 00's. Inlucde the title and the year Eg:
     // [{ title: 'Harry Potter and the Sorcerer\'s Stone', year: 1997 },
     //  { title: 'Life of Pi', year: 2001 },
     //  { title: 'The Curious Incident of the Dog in the Night-Time', year: 2003 }]
-
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
+//HOW/WHAT method will be used? - reduce() or filter(), map().
   },
 
-  getBooksByYear(books, year) {
-    // return an array of objects containing all books that were
-    // published after the specified year without the author or genre data. 
+getBooksByYear(books, year) {
+  return books
+  .filter(book => book.published > year)
+  .map(item => {
+    return {
+      title: item.title,
+      year: item.published
+    };
+  });
+
+// WHAT - what is the data type I am working with? Array of objects.
+// WANT - return an array of objects containing all books that were published after the specified year without the author or genre data. 
     // The published property should be changed to year for the returned books.
     // e.g. given 1990, return
 
     // [{ title: 'Harry Potter and the Sorcerer\'s Stone', year: 1997 },
     //  { title: 'Life of Pi', year: 2001 },
     //  { title: 'The Curious Incident of the Dog in the Night-Time', year: 2003 }]
+//HOW/WHAT method will be used? - filteler(), map() or reduce().
 
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
   }
-
 };
-
 
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------

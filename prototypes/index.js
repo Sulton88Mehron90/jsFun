@@ -386,7 +386,6 @@ getBooksByYear(books, year) {
     //  { title: 'Life of Pi', year: 2001 },
     //  { title: 'The Curious Incident of the Dog in the Night-Time', year: 2003 }]
 //HOW/WHAT method will be used? - filteler(), map() or reduce().
-
   }
 };
 
@@ -400,41 +399,41 @@ getBooksByYear(books, year) {
 
 const weatherPrompts = {
   getAverageTemps() {
-    // return an array of all the average temperatures. Eg:
-    // [ 40, 40, 44.5, 43.5, 57, 35, 65.5, 62, 14, 46.5 ]
+    return weather
+    .map(item => (item.temperature.high + item.temperature.low) /2);
 
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
+//WHAT - what data type I am working with? - Array of objects.
+//WANT - what do I want for the output to be? -   return an array of all the average temperatures.    Eg:[ 40, 40, 44.5, 43.5, 57, 35, 65.5, 62, 14, 46.5 ]
+//HOW/WHAT method I am thinking of using to solve this problem? - map().
   },
 
   findSunnySpots() {
-    // Return an array of sentences of the locations that are sunny
-    // and mostly sunny. Include the location and weather type. Eg:
+
+    return weather
+    .filter(item => item.type === 'sunny' || item.type === 'mostly sunny')
+    .map(note => `${note.location} is ${note.type}.`
+  );
+
+//WHAT - Array of objects plus object a s a value in one of the keys of the object within main array.
+//WANT - Return an array of sentences of the locations that are sunny and mostly sunny. Include the location and weather type. Eg:
     // [ 'Atlanta, Georgia is sunny.',
     // 'New Orleans, Louisiana is sunny.',
-    // 'Raleigh, North Carolina is mostly sunny.' ]
+    // 'Raleigh, North Carolina is mostly sunny.' ].
+//HOW/What method? - filter(), map().
 
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
   },
 
   findHighestHumidity() {
-    // Return the location with the highest humidity. Eg:
+    return weather.sort((a, b) => b.humidity - a.humidity)[0]
+//WHAT - Array of objects plus nested object.
+//WANT - Return the location with the highest humidity. Eg:
     // {
     //   location: 'Portland, Oregon',
     //   type: 'cloudy',
     //   humidity: 84,
     //   temperature: { high: 49, low: 38 }
     // }
-
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
+//HOW/WHAT method I will be using? - find().
 
   }
 };
@@ -450,38 +449,105 @@ const weatherPrompts = {
 
 const nationalParksPrompts = {
   getParkVisitList() {
-    /// Return an object containing the names of which parks I need to visit
-    // and the ones I have already visited eg:
+
+    // let parksToVisit = [];
+    // let parksVisited = [];
+
+    // return nationalParks.map( item => {
+    //   if(item.visited === false){
+    //     parksToVisit.push(item.name)
+    //   }else {
+    //     parksVisited.push(item.name)
+    //   };
+    // return {
+    //   parksToVisit: parksToVisit,
+    //   parksVisited: parksVisited
+    //  };
+    // });
+// !!!!why above didnt work? what am i missing?!!!!!
+
+return nationalParks.reduce((acc, cur) => {
+      if(cur.visited === false){
+        // go with simple. you can get to `visited` information with cur.visited. you dont need to check acc.
+        acc.parksToVisit.push(cur.name);
+      } else {
+        acc.parksVisited.push(cur.name);
+      };
+      return acc;
+    }, {parksToVisit: [], parksVisited: [] });
+    // create the object keys here if they determend and in this case its an [] so assign to it.
+
+//psudocode:
+//WHAT, data I am working with? - Array of objects with obj as value in one of the kays in object.
+//WANT, output? - Return an object containing the names of which parks I need to visit and the ones I have already visited eg:
     // {
     //   parksToVisit: ["Yellowstone", "Glacier", "Everglades"],
     //   parksVisited: ["Rocky Mountain", "Acadia", "Zion"]
-    //}
-
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
+    //} 
+// HOW/WHAT method will be used? - reduce or map
   },
 
   getParkInEachState() {
-    // Return an array of objects where the key is the state and the value is its National Park
+    return nationalParks
+      // .map(item => {
+      //   let output = {};
+      //   if( item.location){
+      //     output[item.location] = item.name;
+      //   }
+      //   return output
+      // });
+
+    .reduce((acc, cur) => {
+      if(cur.location){
+        let output = {}
+       output[cur.location] = cur.name
+//So, output[cur.location] is assigning a new property to the output object with the name of the state (taken from cur.location). The value of this property is set to the park name (taken from cur.name).
+        acc.push(output)
+      }
+      return acc;
+    }, []);
+
+//WHAT data type? - array of objects with array as one of the value of the objects key.
+//WANT do i need to return? - Return an array of objects where the key is the state and the value is its National Park
     // eg: [ { Colorado: 'Rocky Mountain' },
     // { Wyoming: 'Yellowstone' },
     // { Montana: 'Glacier' },
     // { Maine: 'Acadia' },
     // { Utah: 'Zion' },
     // { Florida: 'Everglades' } ]
+//How? WHAT method? - map or reduce
 
-
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
   },
 
   getParkActivities() {
-    // Return an array of all the activities I can do
-    // in a National Park. Make sure to exclude duplicates. eg:
+    let allActivities = nationalParks.map(park => park.activities);
+    let flattenedActivities = [].concat(...allActivities);
+    let output = [...new Set(flattenedActivities)];
+//Set objects are collections of values. A value in the set may only occur once; it is unique in the set's collection. You can iterate through the elements of a set in insertion order.
+// Use to remove duplicate elements from an array
+// const numbers = [2, 3, 4, 4, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 5, 32, 3, 4, 5];
+// console.log([...new Set(numbers)]);
+// [2, 3, 4, 5, 6, 7, 32]
+
+    // flattenedActivities.reduce((acc, cur) => {
+    //   if(!acc.includes(cur)){
+    //     acc.push(cur)
+    //   };
+    //   return acc;
+    // },[]);
+    //Come back to it. Why it didnt work?
+
+  //  let output = [];
+  //  flattenedActivities.forEach(act => {
+  //     if(!output.includes(act)){
+  //       output.push(act)
+  //     };
+  //   })
+  return output 
+
+
+//WHAT - data type i am working with? - Array of objects with array as value property on one of the key property of the objects in the main array.
+//WANT - what do i want the return/outcome to be? - Return an array of all the activities I can do in a National Park. Make sure to exclude duplicates. eg:
     // [ 'hiking',
     //   'shoeshoing',
     //   'camping',
@@ -494,11 +560,7 @@ const nationalParksPrompts = {
     //   'canyoneering',
     //   'backpacking',
     //   'rock climbing' ]
-
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
+// HOW? WHAT method am I thinking to use? - map() or reduce();
   }
 };
 
@@ -510,36 +572,52 @@ const nationalParksPrompts = {
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 
-
-
-
-
-
 // DATASET: breweries from ./datasets/breweries
 const breweryPrompts = {
   getBeerCount() {
-    // Return the total beer count of all beers for every brewery e.g.
-    // 40
+    return breweries
+    .reduce((acc, cur) => {
+    acc += cur.beers.length;
+    return acc;
+    }, 0);
 
-    /* CODE GOES HERE */
+    // .map(item => {
+    //   let total = 0;
+    //   total += item.beers.length
+    //   return total
+    // }).reduce((acc, cur) => {
+    //   acc += cur
+    //   return acc;
+    // })
 
-    // Annotation:
-    // Write your annotation here as a comment
+//Psudocode:
+//WHAT? data i am working with: Array of objects with nested aobject as one of the value in the main array of objects. ha? lol
+//WANT? what i want for the outcome to be? - Return the total beer count of all beers for every brewery e.g. // 40
+//HOW? WHAT method i will be using? - reduce(), map()
   },
 
   getBreweryBeerCount() {
-    // Return an array of objects where each object has the name of a brewery
-    // and the count of the beers that brewery has e.g.
+    return breweries
+      // .map(item => ({
+      //   name: item.name,
+      //   beerCount: item.beers.length
+      //  }))
+    
+    .reduce((acc, cur) => {
+      if(cur.name){
+        acc.push({ name: cur.name, beerCount: cur.beers.length})
+      }
+      return acc;
+    }, []);
+
+//WHAT dta type i am working with. - array of objects with nested object value for one of the keys.
+//WANT what outcome would i want? - Return an array of objects where each object has the name of a brewery and the count of the beers that brewery has e.g.
     // [
     //  { name: 'Little Machine Brew', beerCount: 12 },
     //  { name: 'Ratio Beerworks', beerCount: 5},
     // ...etc.
     // ]
-
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
+//How and what method i will be using?
   },
 
   getSingleBreweryBeerCount(breweryName) {

@@ -306,14 +306,13 @@ const classPrompts = {
     // How/WHAT method will be used? - reduce().
 
   },
+sortByCapacity() {
+  return classrooms.sort((a, b) => a.capacity -b.capacity);
+ 
+// WHAT - what is the data type I am working with? Attay of objects.
+// WHANT -    // Return the array of classrooms sorted by their capacity (least capacity to greatest)
+//HOW/WHAT method will be used? - sort().
 
-  sortByCapacity() {
-    // Return the array of classrooms sorted by their capacity (least capacity to greatest)
-
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
   }
 };
 
@@ -326,23 +325,22 @@ const classPrompts = {
 // DATASET: books from './datasets/books
 
 const bookPrompts = {
-  removeViolence() {
+  removeViolence(data) {
+   return data.filter(book => (book.genre !== 'Horror' && book.genre!== 'True Crime')).map(book => book.title);
+ 
     // Your function should access the books data through a parameter (it is being passed as an argument in the test file)
-    // return an array of all book titles that are not horror or true crime. Eg:
+//psudocode:
+//WHAT - what is the data type I am working with? Array of objects.
+//WANT - return an array of all book titles that are not horror or true crime. Eg:
 
     //  ['1984', 'The Great Gatsby', 'Lord of the Flies', 'Harry Potter and the Sorcerer\'s Stone',
     //   'The Hitchhiker\'s Guide to the Galaxy', 'Flowers for Algernon', 'Slaughterhouse-Five',
     //   'The Handmaid\'s Tale', 'The Metamorphosis', 'Brave New World', 'Life of Pi',
     //   'The Curious Incident of the Dog in the Night - Time', 'The Bell Jar',
     //   'Catch-22', 'Treasure Island']
-
-
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
-
+//HOW/WHAT method will be used? - filter().
   },
+  
   getNewBooks() {
     // return an array of objects containing all books that were
     // published in the 90's and 00's. Inlucde the title and the year Eg:

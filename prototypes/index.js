@@ -20,26 +20,29 @@ const { dinosaurs, humans, movies } = require('./datasets/dinosaurs');
 
 // DATASET: kitties from ./datasets/kitties
 const kittyPrompts = {
-  orangePetNames() {
+  orangePetNames(data) {
     // Return an array of just the names of kitties who are orange e.g.
-        // ['Tiger', 'Snickers']
+// ['Tiger', 'Snickers']
 
-        /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
+ /* CODE GOES HERE */
+return data.filter(cat => cat.color === 'orange').map(name => name.name);
+// WHAT - what is the data type we are working with? - arrray of objects.
+// WANT- what do we want the function to do return/ what data do we want to end up with? - array of names of orange cats.
+// HOW/METHODS- how do we want the function to get the data we need? and what methods can we use? - map and filter.
   },
 
-  sortByAge() {
+  sortByAge(data) {
     // Sort the kitties by their age
 
-    /* CODE GOES HERE */
+return data.sort((a,b) => b.age - a.age);
 
-    // Annotation:
-    // Write your annotation here as a comment
-  },
+// WHAT is the data type I am working with? Attay of objects
+// Whant what output i want to end up with? - sorted age of the cats.
+//How/What methods I would use?- sort().
 
-  growUp() {
+},
+
+  growUp(data) {
     // Return an array of kitties who have all grown up by 2 years e.g.
     // [{
     //   name: 'Felicia',
@@ -54,6 +57,19 @@ const kittyPrompts = {
     // ...etc]
 
     /* CODE GOES HERE */
+
+// WHAT is the data type I am working with? Attay of objects
+// Whant what output i want to end up with? - Return an array of kitties who have all grown up by 2 years e.g.
+//How/What methods I would use? - map() and sort().
+return data.map(cat => 
+  {
+    return {
+      name: cat.name,
+      age: cat.age + 2,
+      color: cat.color
+    }
+  
+  });
   }
 };
 
@@ -77,7 +93,7 @@ const kittyPrompts = {
 
 // DATASET: clubs from ./datasets/clubs
 const clubPrompts = {
-  membersBelongingToClubs() {
+  membersBelongingToClubs(data) {
     // Your function should access the clubs data through a parameter (it is being passed as an argument in the test file)
     // Create an object whose keys are the names of people, and whose values are
     // arrays that include the names of the clubs that person is a part of. e.g.
@@ -87,33 +103,47 @@ const clubPrompts = {
     //   ...etc
     // }
 
-    /* CODE GOES HERE */
+return data.reduce((acc, cur) => {
+  cur.members.forEach(member => {
+    //console.log(acc[member]);
+    if(acc[member]){
+      acc[member].push(cur.club);
+    }else{
+      acc[member] = [cur.club];
+    };
+  })   
+  return acc;
+}, {})
 
-    // Annotation:
-    // Write your annotation here as a comment
+    // WHAT - what is the data type I am working with? Attay of objects.
+    // WHANT - Create an object whose keys are the names of people, and whose values are
+    // arrays that include the names of the clubs that person is a part of.
+    //How/WHAT method will be used? - reduce and forEach().
+  
   }
 };
 
-
-
-
-
-
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
-
-
-
-
-
 
 // DATASET: mods from ./datasets/mods
 const modPrompts = {
   studentsPerMod() {
-    // Return an array of objects where the keys are mod (the number of the module)
+    
+return mods.map(mod => {
+  let studentsPerInstructor = mod.students / mod.instructors
+  return {
+    mod:mod.mod,
+    studentsPerInstructor: studentsPerInstructor
+  }
+  });
+  
+
+// WHAT - what is the data type I am working with? Attay of objects.
+// WHANT - // Return an array of objects where the keys are mod (the number of the module)
     // and studentsPerInstructor (how many students per instructor there are for that mod) e.g.
     // [
     //   { mod: 1, studentsPerInstructor: 9 },
@@ -121,49 +151,43 @@ const modPrompts = {
     //   { mod: 3, studentsPerInstructor: 10 },
     //   { mod: 4, studentsPerInstructor: 8 }
     // ]
+//How/WHAT method will be used? - map().
 
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
   }
 };
 
 
-
-
-
-
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
-
-
-
-
-
 
 // DATASET: cakes from ./datasets/cakes
 const cakePrompts = {
   stockPerCake() {
-    // Return an array of objects that include just the flavor of the cake and how
+    return cakes.map(cake => {
+      return {
+        flavor: cake.cakeFlavor,
+        inStock: cake.inStock
+      };
+  });
+// WHAT - what is the data type I am working with? Attay of objects with nested array as value of the key objects.
+// WHANT - // Return an array of objects that include just the flavor of the cake and how
     // much of that cake is in stock e.g.
     // [
     //    { flavor: 'dark chocolate', inStock: 15 },
     //    { flavor: 'yellow', inStock: 14 },
     //    ..etc
     // ]
-
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
+//How/WHAT method will be used? - map().
   },
 
   onlyInStock() {
-    // Return an array of only the cakes that are in stock
+    return cakes.filter(cake => cake.inStock > 0);
+
+// WHAT - what is the data type I am working with? Attay of objects with nested array.
+// WHANT - // Return an array of only the cakes that are in stock
     // e.g.
     // [
     //   {
@@ -182,37 +206,51 @@ const cakePrompts = {
     // },
     // ..etc
     // ]
-
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
+    //How/What method will be used? - filter().
   },
 
   totalInventory() {
-    // Return the total amount of cakes in stock e.g.
-    // 59
-
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
+    return cakes.reduce((acc, cur) => {
+      acc += cur.inStock;
+      return acc;
+    }, 0);
+// WHAT - what is the data type I am working with? - Array of objects with nested array as value of the key objects.
+//WHANT - Return the total amount of cakes in stock e.g.59
+//HOW/WHAT method will use? - reduce().
   },
 
   allToppings() {
-    // Return an array of all unique toppings (no duplicates) needed to bake
+  return cakes.reduce((acc, cur) => {
+    cur.toppings.forEach(topping => {
+      if(!acc.includes(topping)){
+        acc.push(topping);
+      }
+    })
+    return acc;
+  },[]);
+
+//WHAT - what is the data type I am working with? Attay of objects with nested array.
+//WHANT - Return an array of all unique toppings (no duplicates) needed to bake
     // every cake in the dataset e.g.
     // ['dutch process cocoa', 'toasted sugar', 'smoked sea salt', 'berries', ..etc]
-
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
+    // How/What method will be used? - map().
   },
 
   groceryList() {
-    // I need to make a grocery list. Please give me an object where the keys are
-    // each topping, and the values are the amount of that topping I need to buy e.g.
+    return cakes.reduce((acc, cur) => {
+      // console.log(cur.toppings)
+      cur.toppings.forEach(topping => {
+        if(acc[topping]){
+          acc[topping] += 1;
+        }else{
+          acc[topping] = 1;
+        };
+      })
+      return acc;
+    }, {});
+
+// WHAT - what is the data type I am working with? Attay of objects with nested array.
+//WHANT - I need to make a grocery list. Please give me an object where the keys are each topping, and the values are the amount of that topping I need to buy e.g.
     // {
     //    'dutch process cocoa': 1,
     //    'toasted sugar': 3,
@@ -220,59 +258,53 @@ const cakePrompts = {
     //    'berries': 2,
     //    ...etc
     // }
+//HOW/WHAT method will be used? - reduce().
 
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
   }
 };
 
-
-
-
-
-
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
-
-
-
-
-
 
 // DATASET: classrooms from ./datasets/classrooms
 const classPrompts = {
   feClassrooms() {
-    // Create an array of just the front-end classrooms. e.g.
+   return classrooms.filter(item => item.program === 'FE');
+
+//WHAT - what is the data type I am working with? Attay of objects.
+//WHANT - Create an array of just the front-end classrooms. e.g.
     // [
     //   { roomLetter: 'A', program: 'FE', capacity: 32 },
     //   { roomLetter: 'C', program: 'FE', capacity: 27 },
     //   { roomLetter: 'E', program: 'FE', capacity: 22 },
     //   { roomLetter: 'G', program: 'FE', capacity: 29 }
     // ]
-
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
+//HOW/WHAT method will be used? - filter().
   },
 
   totalCapacities() {
-    // Create an object where the keys are 'feCapacity' and 'beCapacity',
+    return classrooms.reduce((acc, cur) => {
+      if(cur.program === 'FE'){
+        acc.feCapacity += cur.capacity
+        // above you are creating a key-value pair for the front-end classroom.
+      } else {
+        acc.beCapacity += cur.capacity
+      };
+      return acc;
+    }, {feCapacity: 0, beCapacity: 0});
+ 
+// WHAT - what is the data type I am working with? Attay of objects.
+//WHANT - Create an object where the keys are 'feCapacity' and 'beCapacity',
     // and the values are the total capacity for all classrooms in each program e.g.
     // {
     //   feCapacity: 110,
     //   beCapacity: 96
     // }
+    // How/WHAT method will be used? - reduce().
 
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
   },
 
   sortByCapacity() {

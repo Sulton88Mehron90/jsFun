@@ -617,34 +617,37 @@ const breweryPrompts = {
     //  { name: 'Ratio Beerworks', beerCount: 5},
     // ...etc.
     // ]
-//How and what method i will be using?
+//How and what method i will be using? find() and map.
   },
 
   getSingleBreweryBeerCount(breweryName) {
-    // Return a number that is the count of beers that the specified
-    // brewery has e.g.
-    // given 'Ratio Beerworks', return 5
+    return breweries
+    .reduce((acc, cur) => {
+      if(cur.name === breweryName){
+        acc += cur.beers.length
+      }
+    return acc;
+    }, 0);
 
-
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
+//WHAT data type I am working with? array of objects with nested objects in one of the values for one of the keys. data as breweryName is a parameter that is passing.
+//WANT, what the desiered outcome/return? - Return a number that is the count of beers that the specified brewery has e.g.
+// given 'Ratio Beerworks', return 5
+//HOW i would solve it? what methods to use? - filter, map
   },
 
   findHighestAbvBeer() {
-    // Return the beer which has the highest ABV of all beers
-    // e.g.
-    // { name: 'Barrel Aged Nature\'s Sweater', type: 'Barley Wine', abv: 10.9, ibu: 40 }
+    return breweries
+    .flatMap(brewery => brewery.beers)
+    .sort((a, b) => b.abv - a.abv)[0]
+   // flatten [] first befoe working with data from all the arrays!
 
-    /* CODE GOES HERE */
+//What data tyme i am working with? - 
+//Want - what is that i woant to return. - // Return the beer which has the highest ABV of all beers e.g.
+// { name: 'Barrel Aged Nature\'s Sweater', type: 'Barley Wine', abv: 10.9, ibu: 40 }
+//How and what method i will be using? - sort()
 
-    // Annotation:
-    // Write your annotation here as a comment
   }
 };
-
-
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
@@ -655,124 +658,143 @@ const breweryPrompts = {
 
 const boardGamePrompts = {
   listGames(type) {
-    // Return an array of just the names of the games within a specified type. 
-    // e.g. given an argument of "strategy", return
+    return boardGames[type].map(item => item.name)
+
+//What data type i am working with? - object of arrays with objects in them.
+//Want? waht outcome i am willing to get in return. - Return an array of just the names of the games within a specified type. e.g. given an argument of "strategy", return
     // ["Chess", "Catan", "Checkers", "Pandemic", "Battle Ship", "Azul", "Ticket to Ride"]
-
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
+//How and wht method i will use? map()
   },
 
   listGamesAlphabetically(type) {
-    // Return an array of just the names of the games within a specified 
-    // type, sorted alphabetically. 
+   return boardGames[type]
+   .sort((a, b) => a.name.localeCompare(b.name))
+   .map(item => item.name);
+
+//To sort strings alphabetically in ascending order, you should use the localeCompare() function, which is specifically designed to compare strings according to language-appropriate rules.
+   
+//What data type i am working with? - Object of 3 arrays of objects.
+//Want. what i want to be returned? - Return an array of just the names of the games within a specified type, sorted alphabetically. 
     // e.g. given an argument of "childrens", return
     // ["Candy Land", "Connect Four", "Operation", "Trouble"]
-
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
+// How. what method will be i using? - map(), filter(), sort().
   },
 
   findHighestRatedGamesByType(type) {
-    // Return an object which is the highest rated game within the specified type.
-    // e.g. given the argument of 'party', return
-    // { name: 'Codenames', rating: 7.4, maxPlayers: 8 },
-
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
+    return boardGames[type].sort((a, b) => b.rating - a.rating)[0]
+  
+//WHAT data type you are working with? - Object of arrays with array elements.
+//WHANT ? what return you would want to see? - Return an object which is the highest rated game within the specified type.e.g. given the argument of 'party', return
+    // { name: 'Codenames', rating: 7.4, maxPlayers: 8 }
+//HOW/what method you will use to achive this? sort()
   },
 
   averageScoreByType(type) {
-    // Return the average score for the specified type.
-    // e.g. given the argument of "strategy", return 7
-    // note: do not worry about rounding your result.
+    return boardGames[type].reduce((acc, cur) => {
+      acc += (cur.rating) / boardGames[type].length
+      return acc
+    }, 0);
 
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
-  },
+//WHAT data type you are working with? - Object of arrays with array elements.
+//WHANT ? what return you would want to see? - Return the average score for the specified type.e.g. given the argument of "strategy", return 7
+  // note: do not worry about rounding your result.
+//HOW/what method you will use to achive this? reduce()
+},
 
   averageScoreByTypeAndPlayers(type, maximumPlayers) {
-    // Return the average score of any games that match the specified type
-    // and maximum number of players.
-    // e.g. given the arguments of "strategy" and 2, return 6.16666666667
+    let nameCount = 0;
+    return boardGames[type]
+    .filter(member => member.maxPlayers === maximumPlayers)
+    .reduce((acc, cur) => {
+      if(cur.rating){
+        acc += cur.rating;
+        nameCount += 1;
+// takeaway: The nameCount increment and the division of the accumulator by nameCount should not be within the reduce function's callback. This is because reduce is executed for each element of the array, and you want to perform the division only once, after summing up all the ratings.
+      };
+    return acc;
+    }, 0) / nameCount;
+// function averageScoreByTypeAndPlayers(type, maximumPlayers) {
+//const games = boardGames[type].filter(game => game.maxPlayers === maximumPlayers);
+// if (games.length === 0) {
+//  return 0;
+// } 
+//const sum = games.reduce((acc, game) => acc + game.rating, 0);
+// return sum / games.length;
+// };
+// In this version of the function, we:
+   // Filter the games by type and maximum number of players.
+   // If there are no games that match the criteria, we return 0.
+   // We use the reduce function to sum up the ratings of the games that match the criteria.
+   // Finally, we calculate the average by dividing the sum by the number of games.
+
+//Psudocode:
+//WHAT data type you are working with? - Object of arrays with array elements.
+//WHANT ? what return you would want to see? - Return the average score of any games that match the specified type and maximum number of players. e.g. given the arguments of "strategy" and 2, return 6.16666666667
     // note: do not worry about rounding your result.
-
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
+//HOW/what method you will use to achive this? reduce()
   }
 };
 
-
-
-
-
-
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
-
-
-
-
-
-
-// ---------------------------------------------------------------------------
-// ---------------------------------------------------------------------------
-// ---------------------------------------------------------------------------
-// ---------------------------------------------------------------------------
-// ---------------------------------------------------------------------------
-
-
-
-
-
-
 // DOUBLE DATASETS
 // =================================================================
 
 // DATASET: instructors, cohorts from ./datasets/turing
 const turingPrompts = {
   studentsForEachInstructor() {
-    // Return an array of instructors where each instructor is an object
-    // with a name and the count of students in their module. e.g.
+return instructors.reduce((acc, cur) => {
+ cohorts.forEach(mod => {
+  if(cur.module === mod.module){
+    acc.push({name: cur.name, studentCount: mod.studentCount})
+  };
+ });
+  return acc;
+}, []);
+
+//Psudocode:
+//WHAT? - data type I am working with? - 2 Arrays of obj. with nested arr.in them.
+//WANT? - what do I want to return? - Return an array of instructors where each instructor is an object with a name and the count of students in their module. e.g.
+//HOW? - what method I will be using? - reduce().
     // [
     //  { name: 'Pam', studentCount: 21 },
     //  { name: 'Robbie', studentCount: 18 }
     // ]
-
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
   },
 
   studentsPerInstructor() {
-    // Return an object of how many students per teacher there are in each cohort e.g.
+   return cohorts.reduce((acc, cur) => {
+    let instCount = 0
+    instructors.forEach(inst => {
+      if(inst.module === cur.module){
+        instCount += 1;
+      };
+    });
+    let key = `cohort${cur.cohort}`
+    acc[key] = cur.studentCount / instCount;
+   return acc;
+   //takeaways: ALWAYS return acc at the begining!!!
+   },{});
+
+//Psudocode:
+//WHAT? - data type I am working with? - 2 Arrays of obj. with nested arr.in them.
+//WANT? - Return an object of how many students per teacher there are in each cohort e.g.
     // {
     // cohort1806: 9,
     // cohort1804: 10.5
-    // }
-
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
+    // };
+//HOW? - what method I will be using? - reduce() and forEach()
   },
 
   modulesPerTeacher() {
-    // Return an object where each key is an instructor name and each value is
+    
+
+//Psudocode:
+//WHAT? - data type I am working with? - 2 Arrays of obj. with nested arr.in them.
+//WANT? - what outcome i am looking for? what to return? - Return an object where each key is an instructor name and each value is
     // an array of the modules they can teach based on their skills. e.g.:
     // {
     //     Pam: [2, 4],
@@ -785,11 +807,7 @@ const turingPrompts = {
     //     Christie: [1, 2, 3, 4],
     //     Will: [1, 2, 3, 4]
     //   }
-
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
+//HOW? - what method will be using? - reduce(), mayby filter()
   },
 
   curriculumPerTeacher() {
@@ -809,21 +827,11 @@ const turingPrompts = {
   }
 };
 
-
-
-
-
-
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
-
-
-
-
-
 
 // DATASET: bosses, sidekicks from ./datasets/bosses
 const bossPrompts = {

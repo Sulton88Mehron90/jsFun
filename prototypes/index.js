@@ -789,13 +789,22 @@ return instructors.reduce((acc, cur) => {
 //HOW? - what method I will be using? - reduce() and forEach()
   },
 
-  modulesPerTeacher() {
-    
+modulesPerTeacher() {
+  return instructors.reduce((acc, cur) => {
+    cohorts.forEach(item => {
+     if(cur.teaches.some(subj => item.curriculum.includes(subj))){
+       if(!acc[cur.name]){
+        acc[cur.name] = [];
+       };
+        acc[cur.name].push(item.module);
+     };
+    });
+    return acc;
+  }, {});
 
 //Psudocode:
 //WHAT? - data type I am working with? - 2 Arrays of obj. with nested arr.in them.
-//WANT? - what outcome i am looking for? what to return? - Return an object where each key is an instructor name and each value is
-    // an array of the modules they can teach based on their skills. e.g.:
+//WANT? - what outcome i am looking for? what to return? - Return an object where each key is an instructor name and each value is an array of the modules they can teach based on their skills. e.g.:
     // {
     //     Pam: [2, 4],
     //     Brittany: [2, 4],
@@ -807,23 +816,44 @@ return instructors.reduce((acc, cur) => {
     //     Christie: [1, 2, 3, 4],
     //     Will: [1, 2, 3, 4]
     //   }
-//HOW? - what method will be using? - reduce(), mayby filter()
+//HOW? - what method will be using? - reduce() - to iterrate over instractors array to get to the instractor.teaches, forEach() - to iterrate over cohorts array to get to cohorts.curriculum; some() within forEach to iterrate over instractors.teaches array to get subjects to see if it is includes in cohorts.curriculum. becouse we need to see if one subj includes than the teacher can teach that subj. in mod that it is related to.
+
+//Takeaways: didn't need below for the problem but its good to know.
+
+  // let flattenedCurriculum = [].concat(... item.curriculum);
+
+//In this step, the ... (spread) operator is used to "spread out" the arrays inside item.curriculum into individual elements. The concat function then combines all of these elements into a single array called flattenedCurriculum.
+//ex: 
+//from this : [['hiking', 'fishing'],['swimming', 'bird watching']]
+//to this: ['hiking', 'fishing', 'swimming', 'bird watching']
+
+  // let noDupl = [... new Set(flattenedCurriculum)];
+
+//In this step, a new Set object is created from flattenCurriculum. A Set is a built-in JavaScript object that only allows unique values—any duplicate values are automatically removed. The ... (spread) operator is then used again to convert this Set back into an array. The result is an array of unique subjects from all the teaches skills. 
   },
 
-  curriculumPerTeacher() {
-    // Return an object where each key is a curriculum topic and each value is
-    // an array of instructors who teach that topic e.g.:
+curriculumPerTeacher() {
+  return instructors.reduce((acc, cur) => {
+    cur.teaches.forEach(topic => {
+      if(!acc[topic]){ // check if the topic key doesn't exist in the accumulator
+        acc[topic] = [];
+      }
+      acc[topic].push(cur.name); // this must not be inside the else block
+    });
+    return acc;
+  }, {});
+
+
+//WHAT? - data type I am working with? - 2 Arrays of obj. with nested arr.in them.
+//WANT? - what outcome you are wanting to see? - Return an object where each key is a curriculum topic and each value is an array of instructors who teach that topic e.g.:
     // {
     //   html: [ 'Travis', 'Louisa' ],
     //   css: [ 'Travis', 'Louisa' ],
     //   javascript: [ 'Travis', 'Louisa', 'Christie', 'Will' ],
     //   recursion: [ 'Pam', 'Leta' ]
     // }
+//HOW? - what method you want to use? - reduce() and forEach().
 
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
   }
 };
 
@@ -836,48 +866,70 @@ return instructors.reduce((acc, cur) => {
 // DATASET: bosses, sidekicks from ./datasets/bosses
 const bossPrompts = {
   bossLoyalty() {
-    // Create an array of objects that each have the name of the boss and the sum
-    // loyalty of all their sidekicks. e.g.:
+    let partOne = sidekicks.reduce((acc, cur) => {
+      if (!acc[cur.boss]) {
+        acc[cur.boss] = cur.loyaltyToBoss;
+      } else {
+        acc[cur.boss] += cur.loyaltyToBoss;
+      }
+      return acc;
+    }, {})
+    // console.log(partOne)
+   return Object.keys(partOne).map(output => {
+      return {bossName: output, sidekickLoyalty: partOne[output]}
+    });
+// Takeaways: since the data we needed is in sidekicks [] i used reduce to iterrate ove that array. checked if acc[cur.boss] is true. if it is false create a key in acc and give it a value of cur.loyaltyToBoss. else add += cur.loyaltyToBoss to acc. in order to get the exspected return used Object.key on the varieble with reduce.
+    //{ Scar: 16, Ursula: 20, Jafar:3 } 
+//the outcome is an object that is why used the Object.keys to get the keys and used map() over the new keys and returned the wanted outcome format.
+
+//WHAT? - what type of data you are working with? - 1 object and 1 array with nested obj with Array as value for one of the keys in objects.
+//WANT? - what is the desiered outcome? return? - Create an array of objects that each have the name of the boss and the sum loyalty of all their sidekicks. e.g.:
     // [
     //   { bossName: 'Jafar', sidekickLoyalty: 3 },
     //   { bossName: 'Ursula', sidekickLoyalty: 20 },
     //   { bossName: 'Scar', sidekickLoyalty: 16 }
     // ]
-
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
+//HOW? - what method you will be using? Object.keys reduce(), map()... nested methods
   }
 };
-
-
-
-
-
-
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
-
-
-
-
-
 
 // DATASET: constellations, stars } from ./datasets/astronomy
 const astronomyPrompts = {
   starsInConstellations() {
-    // Return an array of all the star objects that appear in any of the constellations
-    // listed in the constellations object e.g.
+    // return Object.keys(constellations)
+    // .map(key => 
+    //   stars
+    // .reduce((acc, cur) => {
+    //   if(!constellations[key].alternateNames.includes(cur.constellation) && !constellations[key].starNames.includes(cur.name)) {
+    //     acc.push(cur)
+    //   };
+    //   return acc;
+    // },[])
+    // ).flat()
+
+    return Object.keys(constellations)
+    .map(key => stars
+    .filter(star => !constellations[key].alternateNames.includes(star.constellation) &&
+      !constellations[key].starNames.includes(star.name)
+    ))
+    .flat();
+
+//HELP!!!!!
+
+//WHAT? - what data type i am working with? - one object of objects with nested arrays. Second is an array of objects.
+//WANT? - what i want the return be? - Return an array of all the star objects that appear in any of the constellations listed in the constellations object e.g.
     // [
     //   { name: 'Rigel',
     //     visualMagnitude: 0.13,
     //     constellation: 'Orion',
     //     lightYearsFromEarth: 860,
-    //     color: 'blue' },
+    //     color: 'blue' 
+  //      },
     //   { name: 'Betelgeuse',
     //     visualMagnitude: 0.5,
     //     constellation: 'Orion',
@@ -898,16 +950,22 @@ const astronomyPrompts = {
     //     color: 'blue'
     //   }
     // ]
-
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
+// HOW? what method i will be using? - reduce(),  map(), filter(), bject.keys
   },
 
   starsByColor() {
-    // Return an object with keys of the different colors of the stars,
-    // whose values are arrays containing the star objects that match e.g.
+    return stars.reduce((acc, cur) => {
+      if(!acc[cur.color]){
+        acc[cur.color] = []
+      };
+        acc[cur.color].push(cur)
+      return acc;
+    },{});
+
+//Takeaways: not always need to use else. think than decide if its needed.
+
+//WHAT? - what data type i am working with? - one object of objects with nested arrays. Second is an array of objects.
+//WANT? - what do i want the outcome to be? - Return an object with keys of the different colors of the stars, whose values are arrays containing the star objects that match e.g.
     // {
     //   blue: [{obj}, {obj}, {obj}, {obj}, {obj}],
     //   white: [{obj}, {obj}],
@@ -915,16 +973,20 @@ const astronomyPrompts = {
     //   orange: [{obj}],
     //   red: [{obj}]
     // }
-
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
+//HOW? - what method to use? - reduce(), map(), filter()
   },
 
   constellationsStarsExistIn() {
-    // Sort the stars by brightness and return an array of the star's constellation names
-    // Brightest Stars are indicated by visualMagnitude - the lower the number, the brighter the star
+    const brightestStars = stars
+    .sort((a, b) => a.visualMagnitude - b.visualMagnitude)
+    .map(brighter => brighter.constellation);
+   // let output = [... new Set(brightestStars)];
+    return brightestStars
+
+//ASK for help!
+
+//WHAT? - what data type i am working with? - one object of objects with nested arrays. Second is an array of objects.
+//WANT? - Sort the stars by brightness and return an array of the star's constellation names Brightest Stars are indicated by visualMagnitude - the lower the number, the brighter the star
     // e.g.
     //  [ "Canis Major",
     //    "Carina",
@@ -936,77 +998,97 @@ const astronomyPrompts = {
     //    "The Plow",
     //    "Orion",
     //    "The Little Dipper" ]
-
-
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
+//HOW? - what method would i use? - sort() and map()
   }
 };
-
-
-
-
-
-
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
-// ---------------------------------------------------------------------------
-
-
-
-
-
-
+// ------------------------------------------------------------------
 // DATASET: charaters, weapons from ./datasets/ultima
+
 const ultimaPrompts = {
   totalDamage() {
-
-    // Return the sum of the amount of damage for all the weapons that our characters can use
-    // Answer => 113
-
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
+    return characters.reduce((prevChar, curChar) => {
+      curChar.weapons.reduce((acc, cur) => {
+        prevChar += weapons[cur].damage
+        return acc;
+      }, 0)
+      return prevChar;
+  }, 0)
+// Takeaways: using forEach and reduce inside it didnt give me anything. using map() give me the otput of array of numbers but not the sum of damages.
+//Pseudocode:
+//WHAT? what dtata type I am working with? - Array of objects with array as a value for one of the keys in the object. Objeject of objects.
+//WANT? - what do i want to be returned. - Return the sum of the amount of damage for all the weapons that our characters can use // Answer => 113
+//HOW? - what methods will you be using? - reduce(), 
   },
 
   charactersByTotal() {
+    return characters
+    .map(character => {
+      let totalD = 0;
+      let totalR = 0;
+    character.weapons.forEach( weapon => {
+      totalD += weapons[weapon].damage;
+      totalR += weapons[weapon].range;
+    });
+    return { [character.name]: 
+      {
+        damage: totalD, 
+        range: totalR
+      }
+    } 
+    });
+    // .reduce((acc, cur) => {
+    //  let totalDamage = 0;
+    //  let totalRange = 0;
+    // cur.weapons
+    // .forEach(weapon => {
+    //   totalDamage += weapons[weapon].damage;
+    //   totalRange += weapons[weapon].range;
+    // });
+    // acc.push({[cur.name]: {damage: totalDamage, range: totalRange}})
+    //   return acc;
+    // }, []);
 
-    // Return the sum damage and total range for each character as an object.
+ 
+    
+//Pseudocode:
+//WHAT? - what dtata type I am working with? - Array of objects with array as a value for one of the keys in the object. Objeject of objects.
+//WANT? - what do you want to return? Return the sum damage and total range for each character as an object.
     // ex: [ { Avatar: { damage: 27, range: 24 }, { Iolo: {...}, ...}
-
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
-  },
+//How? - what method to use? - for each and reduce.
+},
 };
 
-
-
-
-
-
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
-
-
-
-
-
 
 // DATASET: dinosaurs, humans, movies from ./datasets/dinosaurs
 const dinosaurPrompts = {
-  countAwesomeDinosaurs() {
-    // Return an object where each key is a movie title and each value is the
-    // number of awesome dinosaurs in that movie. e.g.:
+  countAwesomeDinosaurs() {  
+
+    let awesomeDinos = {};
+
+    movies.forEach(movie => {
+    let count = 0;
+
+    Object.keys(dinosaurs).forEach(key => {
+      if(movie.dinos.includes(key) && dinosaurs[key].isAwesome === true){
+        count += 1;
+      };
+    })
+  awesomeDinos[movie.title] = count;
+  })
+ return awesomeDinos;
+    
+
+//WHAT? - what data type you'll be working with? - object of objects, and array of objects with nested arrays.
+//WANT? - what would you try to return? - Return an object where each key is a movie title and each value is the number of awesome dinosaurs in that movie. e.g.:
     // {
     //   'Jurassic Park': 5,
     //   'The Lost World: Jurassic Park': 8,
@@ -1014,97 +1096,132 @@ const dinosaurPrompts = {
     //   'Jurassic World': 11,
     //   'Jurassic World: Fallen Kingdom': 18
     // }
-
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
+//HOW? what method you'll be using? - filter(), map()
   },
 
   averageAgePerMovie() {
-    /* Return an object where each key is a movie director's name and each value is
-        an object whose key is a movie's title and whose value is the average age
-        of the cast on the release year of that movie.
-      e.g.:
-      {
-        'Steven Spielberg':
-          {
-            'Jurassic Park': 34,
-            'The Lost World: Jurassic Park': 37
-          },
-        'Joe Johnston':
-          {
-            'Jurassic Park III': 44
-          },
-        'Colin Trevorrow':
-          {
-            'Jurassic World': 56
-           },
-        'J. A. Bayona':
-          {
-            'Jurassic World: Fallen Kingdom': 59
-          }
+    return movies.reduce((acc, cur) => {
+      let age = [];
+    
+    cur.cast.forEach(human => {
+      if(humans[human]) { 
+// checking if human is in the humans object
+        age.push(cur.yearReleased - humans[human].yearBorn);
       }
-    */
-
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
+      });
+    let avgAgeCount = Math.floor(age.reduce((acc, cur) => acc + cur, 0) / age.length);
+    
+      if(!acc[cur.director]){
+        acc[cur.director] = {};
+      }
+    
+      acc[cur.director][cur.title] = avgAgeCount;
+        return acc;
+      }, {});
+    
+//WHAT? - what data type you'll be working with? - object of objects, and array of objects with nested arrays.
+//WANT? - what you want to return? - Return an object where each key is a movie director's name and each value is an object whose key is a movie's title and whose value is the average age of the cast on the release year of that movie. e.g.:
+// {
+//   'Steven Spielberg':
+//     {
+//       'Jurassic Park': 34,
+//       'The Lost World: Jurassic Park': 37
+//     },
+//   'Joe Johnston':
+//     {
+//       'Jurassic Park III': 44
+//     },
+//   'Colin Trevorrow':
+//     {
+//       'Jurassic World': 56
+//     },
+//   'J. A. Bayona':
+//     {
+//       'Jurassic World: Fallen Kingdom': 59
+//     }
+// }
+//HOW? what method you will be using? 
   },
 
-  uncastActors() {
-    /*
-    Return an array of objects that contain the names of humans who have not been cast in a Jurassic Park movie (yet), their nationality, and their imdbStarMeterRating. The object in the array should be sorted alphabetically by nationality.
+uncastActors() {
+  return Object.keys(humans).reduce((acc, cur) => {
+    const jurassicParkMovies = movies.filter(movie => movie.title.includes("Jurassic Park"));
 
-    e.g.
-      [{
-        name: 'Justin Duncan',
-        nationality: 'Alien',
-        imdbStarMeterRating: 0
-      },
-      {
-        name: 'Karin Ohman',
-        nationality: 'Chinese',
-        imdbStarMeterRating: 0
-      },
-      {
-        name: 'Tom Wilhoit',
-        nationality: 'Kiwi',
-        imdbStarMeterRating: 1
-      }, {
-        name: 'Jeo D',
-        nationality: 'Martian',
-        imdbStarMeterRating: 0
-      }]
-    */
+    let notInJurassicPark = jurassicParkMovies.every(movie => !movie.cast.includes(cur));
 
-    /* CODE GOES HERE */
+      if (notInJurassicPark) {
+        acc.push({
+          name: cur,
+          nationality: humans[cur].nationality,
+          imdbStarMeterRating: humans[cur].imdbStarMeterRating
+        });
+      }
+      return acc;
+    }, []).sort((a, b) => a.nationality.localeCompare(b.nationality));
+  
+//Help!!  there might be a problem with the data in your movies or humans object.   
+//WHAT? - what data type you'll be working with? - object of objects, and array of objects with nested arrays.
+//WANT? - what is the return should be? - Return an array of objects that contain the names of humans who have not been cast in a Jurassic Park movie (yet), their nationality, and their imdbStarMeterRating. The object in the array should be sorted alphabetically by nationality.
+//HOW? what methods? - reduce, filter, sort
 
-    // Annotation:
-    // Write your annotation here as a comment
+    // e.g.
+    //   [
+    //  {
+    //     name: 'Justin Duncan',
+    //     nationality: 'Alien',
+    //     imdbStarMeterRating: 0
+    //   },
+    //   {
+    //     name: 'Karin Ohman',
+    //     nationality: 'Chinese',
+    //     imdbStarMeterRating: 0
+    //   },
+    //   {
+    //     name: 'Tom Wilhoit',
+    //     nationality: 'Kiwi',
+    //     imdbStarMeterRating: 1
+    //   }, {
+    //     name: 'Jeo D',
+    //     nationality: 'Martian',
+    //     imdbStarMeterRating: 0
+    //   }
+  //   ]
+//How? what method should be used? - map, filter, sort.
+
   },
 
   actorsAgesInMovies() {
-    /*
-    Return an array of objects for each human and the age(s) they were in the movie(s) they were cast in, as an array of age(s). Only include humans who were cast in at least one movie.
+    return Object.keys(humans).reduce((acc, cur) => {
+      let age = []
+      movies.forEach(movie => {
+        if(movie.cast.includes(cur)){
+          age.push(movie.yearReleased - humans[cur].yearBorn)
+        };
+      })
+      if(age.length > 0){  
+// only push actor to acc if they have acted in at least one movie
+      acc.push({
+        name: cur,
+        ages: age
+      })
+    }
+      return acc;
+    }, []);
 
-    e.g.
-    [ { name: 'Sam Neill', ages: [ 46, 54 ] },
-      { name: 'Laura Dern', ages: [ 26, 34 ] },
-      { name: 'Jeff Goldblum', ages: [ 41, 45, 63, 66 ] },
-      { name: 'Richard Attenborough', ages: [ 70, 74, 92, 95 ] },
-      { name: 'Ariana Richards', ages: [ 14, 18 ] },
-      { name: 'Joseph Mazello', ages: [ 10, 14 ] },
-      { name: 'BD Wong', ages: [ 33, 55, 58 ] },
-      { name: 'Chris Pratt', ages: [ 36, 39 ] },
-      { name: 'Bryce Dallas Howard', ages: [ 34, 37 ] } ]
-    */
-
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
+//WHAT? - what data type you'll be working with? - object of objects, and array of objects with nested arrays.
+//WANT? - Return an array of objects for each human and the age(s) they were in the movie(s) they were cast in, as an array of age(s). Only include humans who were cast in at least one movie. e.g.
+    // [ 
+    //   { name: 'Sam Neill', ages: [ 46, 54 ] },
+    //   { name: 'Laura Dern', ages: [ 26, 34 ] },
+    //   { name: 'Jeff Goldblum', ages: [ 41, 45, 63, 66 ] },
+    //   { name: 'Richard Attenborough', ages: [ 70, 74, 92, 95 ] },
+    //   { name: 'Ariana Richards', ages: [ 14, 18 ] },
+    //   { name: 'Joseph Mazello', ages: [ 10, 14 ] },
+    //   { name: 'BD Wong', ages: [ 33, 55, 58 ] },
+    //   { name: 'Chris Pratt', ages: [ 36, 39 ] },
+    //   { name: 'Bryce Dallas Howard', ages: [ 34, 37 ] } 
+    // ]
+//How? what method should be used? - 
   }
 };
 

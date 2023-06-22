@@ -1070,24 +1070,21 @@ const ultimaPrompts = {
 
 // DATASET: dinosaurs, humans, movies from ./datasets/dinosaurs
 const dinosaurPrompts = {
-  countAwesomeDinosaurs() {
+  countAwesomeDinosaurs() {  
+
     let awesomeDinos = {};
 
     movies.forEach(movie => {
-      let count = 0;
+    let count = 0;
 
-      Object.keys(dinosaurs).forEach(key => { 
-
-        if(dinosaurs[key].isAwesome && movie.dinos.includes(key)) {
-          count += 1;
-        }
-      });
-
-      awesomeDinos[movie.title] = count;
-
-      });
-      
-      return awesomeDinos;
+    Object.keys(dinosaurs).forEach(key => {
+      if(movie.dinos.includes(key) && dinosaurs[key].isAwesome === true){
+        count += 1;
+      };
+    })
+  awesomeDinos[movie.title] = count;
+  })
+ return awesomeDinos;
     
 
 //WHAT? - what data type you'll be working with? - object of objects, and array of objects with nested arrays.
@@ -1103,9 +1100,25 @@ const dinosaurPrompts = {
   },
 
   averageAgePerMovie() {
-
-   
-
+    return movies.reduce((acc, cur) => {
+      let age = [];
+    
+    cur.cast.forEach(human => {
+      if(humans[human]) { 
+// checking if human is in the humans object
+        age.push(cur.yearReleased - humans[human].yearBorn);
+      }
+      });
+    let avgAgeCount = Math.floor(age.reduce((acc, cur) => acc + cur, 0) / age.length);
+    
+      if(!acc[cur.director]){
+        acc[cur.director] = {};
+      }
+    
+      acc[cur.director][cur.title] = avgAgeCount;
+        return acc;
+      }, {});
+    
 //WHAT? - what data type you'll be working with? - object of objects, and array of objects with nested arrays.
 //WANT? - what you want to return? - Return an object where each key is a movie director's name and each value is an object whose key is a movie's title and whose value is the average age of the cast on the release year of that movie. e.g.:
 // {
@@ -1130,58 +1143,85 @@ const dinosaurPrompts = {
 //HOW? what method you will be using? 
   },
 
-  uncastActors() {
-    /*
-    Return an array of objects that contain the names of humans who have not been cast in a Jurassic Park movie (yet), their nationality, and their imdbStarMeterRating. The object in the array should be sorted alphabetically by nationality.
+uncastActors() {
+  return Object.keys(humans).reduce((acc, cur) => {
+    const jurassicParkMovies = movies.filter(movie => movie.title.includes("Jurassic Park"));
 
-    e.g.
-      [{
-        name: 'Justin Duncan',
-        nationality: 'Alien',
-        imdbStarMeterRating: 0
-      },
-      {
-        name: 'Karin Ohman',
-        nationality: 'Chinese',
-        imdbStarMeterRating: 0
-      },
-      {
-        name: 'Tom Wilhoit',
-        nationality: 'Kiwi',
-        imdbStarMeterRating: 1
-      }, {
-        name: 'Jeo D',
-        nationality: 'Martian',
-        imdbStarMeterRating: 0
-      }]
-    */
+    let notInJurassicPark = jurassicParkMovies.every(movie => !movie.cast.includes(cur));
 
-    /* CODE GOES HERE */
+      if (notInJurassicPark) {
+        acc.push({
+          name: cur,
+          nationality: humans[cur].nationality,
+          imdbStarMeterRating: humans[cur].imdbStarMeterRating
+        });
+      }
+      return acc;
+    }, []).sort((a, b) => a.nationality.localeCompare(b.nationality));
+  
+//Help!!  there might be a problem with the data in your movies or humans object.   
+//WHAT? - what data type you'll be working with? - object of objects, and array of objects with nested arrays.
+//WANT? - what is the return should be? - Return an array of objects that contain the names of humans who have not been cast in a Jurassic Park movie (yet), their nationality, and their imdbStarMeterRating. The object in the array should be sorted alphabetically by nationality.
+//HOW? what methods? - reduce, filter, sort
 
-    // Annotation:
-    // Write your annotation here as a comment
+    // e.g.
+    //   [
+    //  {
+    //     name: 'Justin Duncan',
+    //     nationality: 'Alien',
+    //     imdbStarMeterRating: 0
+    //   },
+    //   {
+    //     name: 'Karin Ohman',
+    //     nationality: 'Chinese',
+    //     imdbStarMeterRating: 0
+    //   },
+    //   {
+    //     name: 'Tom Wilhoit',
+    //     nationality: 'Kiwi',
+    //     imdbStarMeterRating: 1
+    //   }, {
+    //     name: 'Jeo D',
+    //     nationality: 'Martian',
+    //     imdbStarMeterRating: 0
+    //   }
+  //   ]
+//How? what method should be used? - map, filter, sort.
+
   },
 
   actorsAgesInMovies() {
-    /*
-    Return an array of objects for each human and the age(s) they were in the movie(s) they were cast in, as an array of age(s). Only include humans who were cast in at least one movie.
+    return Object.keys(humans).reduce((acc, cur) => {
+      let age = []
+      movies.forEach(movie => {
+        if(movie.cast.includes(cur)){
+          age.push(movie.yearReleased - humans[cur].yearBorn)
+        };
+      })
+      if(age.length > 0){  
+// only push actor to acc if they have acted in at least one movie
+      acc.push({
+        name: cur,
+        ages: age
+      })
+    }
+      return acc;
+    }, []);
 
-    e.g.
-    [ { name: 'Sam Neill', ages: [ 46, 54 ] },
-      { name: 'Laura Dern', ages: [ 26, 34 ] },
-      { name: 'Jeff Goldblum', ages: [ 41, 45, 63, 66 ] },
-      { name: 'Richard Attenborough', ages: [ 70, 74, 92, 95 ] },
-      { name: 'Ariana Richards', ages: [ 14, 18 ] },
-      { name: 'Joseph Mazello', ages: [ 10, 14 ] },
-      { name: 'BD Wong', ages: [ 33, 55, 58 ] },
-      { name: 'Chris Pratt', ages: [ 36, 39 ] },
-      { name: 'Bryce Dallas Howard', ages: [ 34, 37 ] } ]
-    */
-
-    /* CODE GOES HERE */
-
-    // Annotation:
-    // Write your annotation here as a comment
+//WHAT? - what data type you'll be working with? - object of objects, and array of objects with nested arrays.
+//WANT? - Return an array of objects for each human and the age(s) they were in the movie(s) they were cast in, as an array of age(s). Only include humans who were cast in at least one movie. e.g.
+    // [ 
+    //   { name: 'Sam Neill', ages: [ 46, 54 ] },
+    //   { name: 'Laura Dern', ages: [ 26, 34 ] },
+    //   { name: 'Jeff Goldblum', ages: [ 41, 45, 63, 66 ] },
+    //   { name: 'Richard Attenborough', ages: [ 70, 74, 92, 95 ] },
+    //   { name: 'Ariana Richards', ages: [ 14, 18 ] },
+    //   { name: 'Joseph Mazello', ages: [ 10, 14 ] },
+    //   { name: 'BD Wong', ages: [ 33, 55, 58 ] },
+    //   { name: 'Chris Pratt', ages: [ 36, 39 ] },
+    //   { name: 'Bryce Dallas Howard', ages: [ 34, 37 ] } 
+    // ]
+//How? what method should be used? - 
   }
 };
 

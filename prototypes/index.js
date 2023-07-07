@@ -901,23 +901,18 @@ const bossPrompts = {
 // DATASET: constellations, stars } from ./datasets/astronomy
 const astronomyPrompts = {
   starsInConstellations() {
-    // return Object.keys(constellations)
-    // .map(key => 
-    //   stars
-    // .reduce((acc, cur) => {
-    //   if(!constellations[key].alternateNames.includes(cur.constellation) && !constellations[key].starNames.includes(cur.name)) {
-    //     acc.push(cur)
-    //   };
-    //   return acc;
-    // },[])
-    // ).flat()
+   stars
+   .filter(star => {
+     //get the stars name.
+     //go to each constallation starNames and find out if the current stars name is indeed in the array.
+  const keys = Object.keys(constellations)
+   .filter(key =>
+   // console.log(constellations[key].starNames)
+   constellations[key].starNames.includes(star.name))
+   return keys;
+   })
 
-    return Object.keys(constellations)
-    .map(key => stars
-    .filter(star => !constellations[key].alternateNames.includes(star.constellation) &&
-      !constellations[key].starNames.includes(star.name)
-    ))
-    .flat();
+
 
 //HELP!!!!!
 

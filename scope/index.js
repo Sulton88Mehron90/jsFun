@@ -29,11 +29,36 @@ const scope = {
 
     // Log D: personC
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
-    return result;
+   // const result = 'REPLACE WITH YOUR RESULT HERE';
+  //  const result = [
+//   { A: 'CardiB' }, // 'CardiB' corresponds to personB at Log A
+//   { B: 'CardiB' }, // 'CardiB' corresponds to personC at Log B
+//   { C: 'CardiB' }, // 'CardiB' corresponds to personB at Log C
+//   { D: 'Paul' }  // 'Paul' corresponds to personC at Log D
+// ];
+  //  return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    //The comments in the code suggest that this function is intended to be a demonstration of JavaScript scope rules. In JavaScript, variables have function scope. This means that a variable defined inside a function can only be accessed within that function. But in this case, we also have a global variable person which is accessible from anywhere in the code.
+
+// After executing exerciseA function, here's the state of our variables:
+
+// Log A: personB is 'CardiB'
+// Log B: personC is 'CardiB'
+// Log C: personB is 'CardiB'
+// Log D: personC is 'Paul'
+
+//So, the resulting object should look like this:
+
+
+// const result = [
+//   { A: 'CardiB' }, // 'CardiB' corresponds to personB at Log A
+//   { B: 'CardiB' }, // 'CardiB' corresponds to personC at Log B
+//   { C: 'CardiB' }, // 'CardiB' corresponds to personB at Log C
+//   { D: 'Paul' }  // 'Paul' corresponds to personC at Log D
+// ];
+// This represents the state of variables at different points in the execution of the function, highlighting how variable scope can affect the value of variables in JavaScript.
+
   },
 
   exerciseB() {
